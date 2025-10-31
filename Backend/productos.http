@@ -1,0 +1,37 @@
+GET http://localhost:8000/productos
+Accept: application/json
+
+###
+
+POST http://localhost:8000/productos
+Content-Type: application/json
+Accept: application/json
+
+{
+  "nombre": "Agua",
+  "categoria_id": 1,
+  "descripcion": "Agua embotellada marca cielo",
+  "stock": 50,
+  "precio_compra": 500.00,
+  "precio_venta": 900.00
+}
+
+###
+
+PUT http://localhost:8000/productos/1
+Content-Type: application/json
+Accept: application/json
+
+{
+   "nombre": "Agua",
+  "categoria_id": 1,
+  "descripcion": "Agua embotellada marca cielo",
+  "stock": 50,
+  "precio_compra": 400.00,
+  "precio_venta": 800.00
+}
+
+###
+
+DELETE http://localhost:8000/productos/1
+Accept: application/json
