@@ -31,5 +31,5 @@ Accept: application/json
 
 ###DELETE
 
-DELETE {{url}}/usuarios/1
+DELETE {{url}}/usuarios/3
 Accept: application/json
