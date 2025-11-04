@@ -1,0 +1,35 @@
+@url = http://localhost:8000
+
+###GET 
+GET {{url}}/usuarios
+Accept: application/json
+
+
+###POST
+
+POST {{url}}/usuarios
+Content-Type: application/json
+Accept: application/json
+
+{
+  "nombre": "Juan Chiplote",
+  "username": "Juanito123",
+  "contrasena": "dificil123"
+}
+
+###PUT
+
+PUT {{url}}/usuarios/1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "nombre": "Juan Chiplote Modificado",
+  "username": "JuanitoMod123",
+  "contrasena": "dificilMod123"
+}
+
+###DELETE
+
+DELETE {{url}}/usuarios/1
+Accept: application/json
