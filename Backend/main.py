@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import db
-from routes import productos, categorias, usuarios
+from routes import productos, categorias, usuarios, ventas
 
 app = FastAPI()
 
@@ -16,6 +16,7 @@ app.add_middleware(
 app.include_router(productos.router)
 app.include_router(categorias.router)
 app.include_router(usuarios.router)
+app.include_router(ventas.router)
 
 @app.on_event("startup")
 async def startup():
