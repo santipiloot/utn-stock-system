@@ -3,7 +3,7 @@ import TablaProductos from "../../components/products/TablaProductos";
 import Button from "../../components/ui/Button";
 
 // Para ventana modal
-import GenericModal from "../../components/ui/GenericModal";
+import VentanaModalBase from "../../components/ui/VentanaModalBase";
 import VistaProductoPage from "../ProductoForm/VistaProductoPage";
 import ModificarProductoPage from "../ProductoForm/ModificarProductoPage";
 import EliminarProductoPage from "../ProductoForm/EliminarProductoPage";
@@ -123,13 +123,13 @@ export default function TablaProductosPage(){
                 onDelete={handleDelete}
             />
 
-            <GenericModal
+        <VentanaModalBase
                 show={showModal}
                 onHide={handleCloseModal}
                 title={modalTitle}
             >
                 {modalBody}
-            </GenericModal>
+        </VentanaModalBase>
         </div>
     );
 }
