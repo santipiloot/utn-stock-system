@@ -1,11 +1,13 @@
-import './App.css'
+import React from 'react'
+import LoginPage from './pages/Login/LoginPage'
+import TablaProductosPage from './pages/Productos/TablaProductosPage'
 
 function App() {
 
   return (
-    <>
-      <div>Hola</div>
-    </>
+    <div>
+      <TablaProductosPage />
+    </div>
   )
 }
 
