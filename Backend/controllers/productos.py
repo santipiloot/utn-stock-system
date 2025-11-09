@@ -4,8 +4,16 @@ from fastapi import HTTPException
 
 async def listar_productos():
     query = """
-        SELECT id, nombre, categoria_id, descripcion, stock, precio_compra, precio_venta
-        FROM productos
+        SELECT 
+        p.id,
+        p.nombre,
+        c.nombre AS categoria,
+        p.descripcion,
+        p.stock,
+        p.precio_compra,
+        p.precio_venta
+        FROM productos p
+        JOIN categorias c ON p.categoria_id = c.id
     """
     return await db.fetch_all(query)
 

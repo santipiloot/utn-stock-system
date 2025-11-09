@@ -5,7 +5,7 @@ from models.productos import Producto, ProductoIn
 
 router = APIRouter(prefix="/productos", tags=["productos"])
 
-@router.get("/", response_model=List[Producto])
+@router.get("/")
 async def get_productos():
     return await ctrl.listar_productos()
 

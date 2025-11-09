@@ -25,8 +25,8 @@ export default function TablaProductos({ productos, onView, onEdit, onDelete }){
                             <td>{p.nombre}</td>
                             <td className="text-center">{p.stock}</td>
                             <td className="text-center">{p.categoria}</td>
-                            <td className="text-center">{p.precioCompra}</td>
-                            <td className="text-center">{p.precioVenta}</td>
+                            <td className="text-center">{p.precio_compra}</td>
+                            <td className="text-center">{p.precio_venta}</td>
                             <td className="text-center">
                                 <div className="d-flex justify-content-center gap-2">
                                     <Button variant="info" onClick={() => onView(p.id)}>Ver</Button>
