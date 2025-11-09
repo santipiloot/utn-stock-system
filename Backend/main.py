@@ -13,11 +13,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(productos.router)
-app.include_router(categorias.router)
-app.include_router(usuarios.router)
-app.include_router(ventas.router)
-app.include_router(movimientos.router)
+app.include_router(productos.router, prefix = "/productos")
+app.include_router(categorias.router, prefix = "/categorias")
+app.include_router(usuarios.router, prefix = "/usuarios")
+app.include_router(ventas.router, prefix = "/ventas")
+app.include_router(movimientos.router, prefix = "/movimientos")
 
 @app.on_event("startup")
 async def startup():

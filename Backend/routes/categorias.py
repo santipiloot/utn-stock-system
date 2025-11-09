@@ -3,7 +3,7 @@ from typing import List
 from controllers import categorias as ctrl
 from models.categorias import Categoria, CategoriaIn
 
-router = APIRouter(prefix="/categorias", tags=["categorias"])
+router = APIRouter()
 
 @router.get("/", response_model=List[Categoria])
 async def get_categorias():

@@ -3,7 +3,7 @@ from typing import List
 from controllers import ventas as ctrl
 from models.ventas import Ventas, VentasIn
 
-router = APIRouter(prefix = "/ventas", tags = ["ventas"])
+router = APIRouter()
 
 @router.get("/", response_model = list[Ventas])
 async def get_ventas():
