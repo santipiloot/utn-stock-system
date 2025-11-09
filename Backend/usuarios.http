@@ -12,9 +12,9 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "nombre": "Juan Chiplote",
-  "username": "Juanito123",
-  "contrasena": "dificil123"
+  "nombre": "Santino Pilot",
+  "username": "FutbolBoy10",
+  "contrasena": "elMejorJugador"
 }
 
 ###PUT

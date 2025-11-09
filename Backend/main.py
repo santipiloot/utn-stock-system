@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import db
-from routes import productos, categorias, usuarios, ventas, movimientos
+from routes import productos, categorias, usuarios, movimientos
 
 app = FastAPI()
 
@@ -16,7 +16,6 @@ app.add_middleware(
 app.include_router(productos.router, prefix = "/productos")
 app.include_router(categorias.router, prefix = "/categorias")
 app.include_router(usuarios.router, prefix = "/usuarios")
-app.include_router(ventas.router, prefix = "/ventas")
 app.include_router(movimientos.router, prefix = "/movimientos")
 
 @app.on_event("startup")
