@@ -1,12 +1,14 @@
 import React from 'react'
 import LoginPage from './pages/Login/LoginPage'
-import TablaProductosPage from './pages/Productos/TablaProductosPage'
+import TablaProductosPage from './pages/Productos/TablaProductosPAge'
+import VentaProductoPage from './pages/ProductoForm/VentaProductoPage'
 
 function App() {
 
   return (
     <div>
       <TablaProductosPage />
+      <VentaProductoPage />
     </div>
   )
 }
