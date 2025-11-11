@@ -6,8 +6,7 @@ function VentaProductoPage() {
   const [carrito, setCarrito] = useState([]);
   const [movimientoId, setMovimientoId] = useState(null);
 
-  // Hardcoded user ID as per the original file.
-  // In a real app, this would come from an authentication context.
+
   const usuario_id = 1;
 
   const getProductos = async () => {
@@ -22,15 +21,13 @@ function VentaProductoPage() {
     }
   };
 
-  // Creates a new movement when the page loads and sets the ID.
   const getMovimiento = async () => {
     try {
-      // The endpoint to create a movement is a POST request.
       const resMovimiento = await fetch(`http://localhost:8000/movimientos/${usuario_id}`);
       if (!resMovimiento.ok) throw new Error("Error al crear un nuevo movimiento de venta.");
       const data = await resMovimiento.json();
-      setMovimientoId(data); // The endpoint returns the ID directly.
-      setCarrito([]); // A new movement starts with an empty cart.
+      setMovimientoId(data); 
+      setCarrito([]); 
     } catch (error) {
       console.error("Error fetching movimiento:", error);
       alert(error.message);
@@ -38,12 +35,11 @@ function VentaProductoPage() {
   };
 
   useEffect(() => {
-    // Get a new movement ID when the component mounts.
+    // 
     getMovimiento();
     getProductos();
   }, []);
 
-  // Adds one unit of a product to the cart.
   const agregarACarrito = async (producto) => {
     if (!movimientoId || producto.stock <= 0) {
       alert("No se ha podido obtener el movimiento de venta.");
@@ -69,7 +65,6 @@ function VentaProductoPage() {
     getProductos();
   };
 
-  // Removes an entire product line from the cart.
   const quitarDelCarrito = async (productoId) => {
     if (!movimientoId) {
       alert("No se ha podido obtener el movimiento de venta.");
@@ -81,7 +76,7 @@ function VentaProductoPage() {
     };
 
     const response = await fetch("http://localhost:8000/detalle/quitar-producto", {
-        method: 'POST', // Assuming this should be POST based on details.py, though DELETE might be more semantic.
+        method: 'POST', 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(itemParaQuitar),
     });
@@ -96,7 +91,6 @@ function VentaProductoPage() {
   };
 
   const totalCarrito = useMemo(() => {
-    // The backend returns 'precio_unitario' and 'importe'
     return carrito.reduce((total, item) => total + item.importe, 0);
   }, [carrito]);
 
@@ -107,15 +101,8 @@ function VentaProductoPage() {
     }
 
     try {
-      // Example: Finalize movement in the backend if such an endpoint exists.
-      // const res = await fetch(`http://localhost:8000/movimientos/finalizar/${movimientoId}`, {
-      //   method: "PUT",
-      // });
-      // if (!res.ok) throw new Error("Error al finalizar la venta.");
-
       alert("Venta confirmada con éxito!");
 
-      // Reset state for a new sale.
       setCarrito([]);
       setMovimientoId(null);
       getProductos();
