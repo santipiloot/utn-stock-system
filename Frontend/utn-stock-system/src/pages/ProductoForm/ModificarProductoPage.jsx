@@ -14,7 +14,7 @@ export default function ModificarProductoPage({ producto, onConfirmEdit, onClose
     const [categorias, setCategorias] = useState([]);
 
     useEffect(() => {
-        // Cargar categorías desde la API
+        // Cargar categorías desde la API solo una vez
         const fetchCategorias = async () => {
             try {
                 const response = await fetch("http://localhost:8000/categorias");
@@ -27,6 +27,10 @@ export default function ModificarProductoPage({ producto, onConfirmEdit, onClose
 
         fetchCategorias();
 
+    }, []); // Array de dependencias vacío para que se ejecute solo al montar
+
+    useEffect(() => {
+        // Este efecto se encarga de actualizar el formulario cuando el producto o las categorías cambian.
         if (producto) {
             setFormData({
                 nombre: producto.nombre || '',
@@ -34,11 +38,11 @@ export default function ModificarProductoPage({ producto, onConfirmEdit, onClose
                 stock: producto.stock || 0,
                 precio_compra: producto.precio_compra || 0,
                 precio_venta: producto.precio_venta || 0,
-                // Buscamos el ID de la categoría correspondiente al nombre
-                categoria_id: categorias.find(c => c.nombre === producto.categoria)?.id || ''
+                // Si las categorías ya se cargaron, buscamos el ID correspondiente.
+                categoria_id: categorias.length > 0 ? (categorias.find(c => c.nombre === producto.categoria)?.id || '') : ''
             });
         }
-    }, [producto, categorias]); // Dependemos de producto y de que las categorías se hayan cargado
+    }, [producto, categorias]); // Se ejecuta si el producto o las categorías cambian.
 
     if (!producto){
         return (
