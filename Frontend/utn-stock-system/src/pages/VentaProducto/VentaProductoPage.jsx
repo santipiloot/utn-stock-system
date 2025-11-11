@@ -106,7 +106,6 @@ function VentaProductoPage() {
       setCarrito([]);
       setMovimientoId(null);
       getProductos();
-      // Get a new movement for the next sale.
       getMovimiento();
     } catch (error) {
       console.error("Error al confirmar la venta:", error);
