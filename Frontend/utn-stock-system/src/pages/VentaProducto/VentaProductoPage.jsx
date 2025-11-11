@@ -1,14 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
 import Button from "../../components/ui/Button";
 
-function PaginaVenta() {
+function VentaProductoPage() {
   const [productos, setProductos] = useState([]);
   const [carrito, setCarrito] = useState([]);
+  const [movimientoId, setMovimientoId] = useState(null);
 
-  // Simulación de un cliente por defecto. En una app real,
-  // deberías tener una forma de seleccionar o asignar un cliente.
-  // Por ejemplo, un cliente "Consumidor Final" con id = 1.
-  const clientePorDefectoId = 1;
+  // Hardcoded user ID as per the original file.
+  // In a real app, this would come from an authentication context.
+  const usuario_id = 1;
 
   const getProductos = async () => {
     try {
@@ -22,37 +22,82 @@ function PaginaVenta() {
     }
   };
 
+  // Creates a new movement when the page loads and sets the ID.
+  const getMovimiento = async () => {
+    try {
+      // The endpoint to create a movement is a POST request.
+      const resMovimiento = await fetch(`http://localhost:8000/movimientos/${usuario_id}`);
+      if (!resMovimiento.ok) throw new Error("Error al crear un nuevo movimiento de venta.");
+      const data = await resMovimiento.json();
+      setMovimientoId(data); // The endpoint returns the ID directly.
+      setCarrito([]); // A new movement starts with an empty cart.
+    } catch (error) {
+      console.error("Error fetching movimiento:", error);
+      alert(error.message);
+    }
+  };
+
   useEffect(() => {
+    // Get a new movement ID when the component mounts.
+    getMovimiento();
     getProductos();
   }, []);
 
-  const agregarACarrito = (producto) => {
-    setCarrito((prevCarrito) => {
-      const productoExistente = prevCarrito.find((item) => item.id === producto.id);
-      if (productoExistente) {
-        // Si ya existe, incrementa la cantidad
-        return prevCarrito.map((item) =>
-          item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item
-        );
-      } else {
-        // Si no existe, lo agrega con cantidad 1
-        return [...prevCarrito, { ...producto, cantidad: 1 }];
-      }
+  // Adds one unit of a product to the cart.
+  const agregarACarrito = async (producto) => {
+    if (!movimientoId || producto.stock <= 0) {
+      alert("No se ha podido obtener el movimiento de venta.");
+      return;
+    }
+    const itemParaAgregar = {
+      movimientoId: movimientoId,
+      productoId: producto.id,
+      cantidad: 1
+    };
+
+    const response = await fetch("http://localhost:8000/detalle/agregar-producto", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(itemParaAgregar),
     });
+    const data = await response.json();
+    // if (!response.ok) {
+    //   alert(data.detail);
+    //   return;
+    // }
+    setCarrito(data);
+    getProductos();
   };
 
-  const modificarCantidad = (productoId, cantidad) => {
-    setCarrito((prevCarrito) =>
-      prevCarrito
-        .map((item) =>
-          item.id === productoId ? { ...item, cantidad: item.cantidad + cantidad } : item
-        )
-        .filter((item) => item.cantidad > 0) // Elimina el item si la cantidad es 0
-    );
+  // Removes an entire product line from the cart.
+  const quitarDelCarrito = async (productoId) => {
+    if (!movimientoId) {
+      alert("No se ha podido obtener el movimiento de venta.");
+      return;
+    }
+    const itemParaQuitar = {
+      movimientoId: movimientoId,
+      productoId: productoId,
+    };
+
+    const response = await fetch("http://localhost:8000/detalle/quitar-producto", {
+        method: 'POST', // Assuming this should be POST based on details.py, though DELETE might be more semantic.
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(itemParaQuitar),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+        alert(data.detail || "Error al quitar el producto del carrito.");
+        return;
+    }
+    setCarrito(data);
+    getProductos();
   };
 
   const totalCarrito = useMemo(() => {
-    return carrito.reduce((total, item) => total + item.precio_venta * item.cantidad, 0);
+    // The backend returns 'precio_unitario' and 'importe'
+    return carrito.reduce((total, item) => total + item.importe, 0);
   }, [carrito]);
 
   const confirmarVenta = async () => {
@@ -62,33 +107,20 @@ function PaginaVenta() {
     }
 
     try {
-      // 1. Crear la factura para obtener el ID
-      const resFactura = await fetch(`http://localhost:8000/factura/${clientePorDefectoId}`);
-      if (!resFactura.ok) throw new Error("Error al crear la factura.");
-      const facturaId = await resFactura.json();
-
-      // 2. Agregar cada item del carrito a la factura
-      for (const item of carrito) {
-        const itemParaAgregar = {
-          facturaId: facturaId,
-          productoId: item.id,
-          cantidad: item.cantidad,
-        };
-        const resItem = await fetch("http://localhost:8000/detalle/agregar-item", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(itemParaAgregar),
-        });
-        if (!resItem.ok) {
-          const errorData = await resItem.json();
-          throw new Error(`Error al agregar ${item.nombre}: ${errorData.detail}`);
-        }
-      }
+      // Example: Finalize movement in the backend if such an endpoint exists.
+      // const res = await fetch(`http://localhost:8000/movimientos/finalizar/${movimientoId}`, {
+      //   method: "PUT",
+      // });
+      // if (!res.ok) throw new Error("Error al finalizar la venta.");
 
       alert("Venta confirmada con éxito!");
-      // 3. Limpiar el estado y recargar productos
+
+      // Reset state for a new sale.
       setCarrito([]);
+      setMovimientoId(null);
       getProductos();
+      // Get a new movement for the next sale.
+      getMovimiento();
     } catch (error) {
       console.error("Error al confirmar la venta:", error);
       alert(error.message);
@@ -106,17 +138,19 @@ function PaginaVenta() {
               <thead className="table-light">
                 <tr>
                   <th>Nombre</th>
+                  <th>Stock</th>
                   <th>Precio</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
                 {productos.map((prod) => (
-                  <tr key={prod.id}>
+                  <tr key={prod.id} className={prod.stock <= 0 ? "table-danger" : ""}>
                     <td>{prod.nombre}</td>
+                    <td>{prod.stock}</td>
                     <td>${prod.precio_venta.toFixed(2)}</td>
                     <td>
-                      <button className="btn btn-success btn-sm py-0 px-2" onClick={() => agregarACarrito(prod)}>+</button>
+                      <button className="btn btn-success btn-sm py-0 px-2" onClick={() => agregarACarrito(prod)} disabled={prod.stock <= 0}>+</button>
                     </td>
                   </tr>
                 ))}
@@ -132,22 +166,24 @@ function PaginaVenta() {
             <thead className="table-primary">
               <tr>
                 <th>Producto</th>
-                <th>Cantidad</th>
                 <th>P. Unit.</th>
-                <th>Total</th>
+                <th className="text-center">Cantidad</th>
+                <th>Importe</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               {carrito.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.nombre}</td>
-                  <td>
-                    <button className="btn btn-outline-secondary btn-sm py-0 px-2" onClick={() => modificarCantidad(item.id, -1)}>-</button>
+                <tr key={item.producto_id}>
+                  <td>{item.descripcion}</td>
+                  <td>${item.precio_unitario.toFixed(2)}</td>
+                  <td className="text-center">
                     <span className="mx-2">{item.cantidad}</span>
-                    <button className="btn btn-outline-secondary btn-sm py-0 px-2" onClick={() => modificarCantidad(item.id, 1)}>+</button>
                   </td>
-                  <td>${item.precio_venta.toFixed(2)}</td>
-                  <td>${(item.precio_venta * item.cantidad).toFixed(2)}</td>
+                  <td>${item.importe.toFixed(2)}</td>
+                  <td>
+                    <Button className="btn btn-danger btn-sm" onClick={() => quitarDelCarrito(item.producto_id)}>Quitar</Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -155,7 +191,7 @@ function PaginaVenta() {
           <hr />
           <div className="text-end">
             <h3>Total: ${totalCarrito.toFixed(2)}</h3>
-            <Button clase="btn btn-primary" onClick={confirmarVenta} texto="Confirmar Venta">
+            <Button className="btn btn-primary" onClick={confirmarVenta} disabled={carrito.length === 0}>
               Confirmar Venta
             </Button>
           </div>
@@ -165,4 +201,4 @@ function PaginaVenta() {
   );
 }
 
-export default PaginaVenta;
+export default VentaProductoPage;
