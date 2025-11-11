@@ -100,22 +100,69 @@ export default function TablaProductosPage(){
             case 'add':
                 return {
                     title: 'Agregar Nuevo Producto',
-                    body: <AgregarProductoPage onClose={handleCloseModal}/>
+                    body: <AgregarProductoPage onConfirmAdd={handleConfirmAdd} onClose={handleCloseModal}/>
                 };
             default:
                 return { title: '', body: null};
         }
     };
 
-    const handleConfirmDelete = (id) => {
-        setProductos(productos.filter(p => p.id !== id));
-        handleCloseModal(); // Cierra el modal después de eliminar
+    const handleConfirmDelete = async (id) => {
+        try {
+            const response = await fetch(`http://localhost:8000/productos/${id}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) {
+                throw new Error('Error al eliminar el producto');
+            }
+            await response.json();
+            await getProductos(); // Recargamos los productos
+            handleCloseModal(); // Cierra el modal después de eliminar
+        } catch (error) {
+            console.error("Error en la eliminación:", error);
+        }
     };
 
-    const handleConfirmEdit = (updatedProducto) => {
-        setProductos(productos.map(p => p.id === updatedProducto.id ? updatedProducto : p));
-        handleCloseModal();
+    const handleConfirmEdit = async (id, updatedProducto) => {
+        try {
+            const response = await fetch(`http://localhost:8000/productos/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedProducto),
+            });
+            if (!response.ok) {
+                throw new Error('Error al actualizar el producto');
+            }
+            await response.json();
+            await getProductos(); // Recargamos los productos
+            handleCloseModal();
+        } catch (error) {
+            console.error("Error en la actualización:", error);
+        }
     };
+
+    const handleConfirmAdd = async (newProducto) => {
+        try {
+            const response = await fetch(`http://localhost:8000/productos`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newProducto),
+            });
+            if (!response.ok) {
+                throw new Error('Error al agregar el producto');
+            }
+            await response.json();
+            await getProductos(); // Recargamos los productos
+            handleCloseModal();
+        } catch (error) {
+            console.error("Error en la creación:", error);
+        }
+    };
+
 
     const { title: modalTitle, body: modalBody } = renderModalContent();
 

@@ -4,14 +4,11 @@ import Button from "../../components/ui/Button";
 export default function ModificarProductoPage({ producto, onConfirmEdit, onClose }){
     const [formData, setFormData] = useState({
         id: '',
-        nombre: '',
-        descripcion: '',
-        stock: '',
-        precioCompra: '',
-        precioVenta: '',
-        categoria: '',
-        precio_compra: '',
-        precio_venta: '',
+        nombre: producto?.nombre || '',
+        descripcion: producto?.descripcion || '',
+        stock: producto?.stock || 0,
+        precio_compra: producto?.precio_compra || 0,
+        precio_venta: producto?.precio_venta || 0,
         categoria_id: ''
     });
     const [categorias, setCategorias] = useState([]);
@@ -32,13 +29,9 @@ export default function ModificarProductoPage({ producto, onConfirmEdit, onClose
 
         if (producto) {
             setFormData({
-                id: producto.id,
                 nombre: producto.nombre || '',
                 descripcion: producto.descripcion || '',
                 stock: producto.stock || 0,
-                precioCompra: producto.precioCompra || 0,
-                precioVenta: producto.precioVenta || 0,
-                categoria: producto.categoria || '',
                 precio_compra: producto.precio_compra || 0,
                 precio_venta: producto.precio_venta || 0,
                 // Buscamos el ID de la categoría correspondiente al nombre
@@ -62,19 +55,16 @@ export default function ModificarProductoPage({ producto, onConfirmEdit, onClose
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        onConfirmEdit(formData);
         // Preparamos los datos para enviar a la API, asegurando que los números sean números
         const dataToSend = {
-            ...formData,
+            nombre: formData.nombre,
+            descripcion: formData.descripcion,
             stock: parseInt(formData.stock, 10),
             precio_compra: parseFloat(formData.precio_compra),
             precio_venta: parseFloat(formData.precio_venta),
             categoria_id: parseInt(formData.categoria_id, 10)
         };
-        // Quitamos el ID del cuerpo de la petición, ya que va en la URL
-        delete dataToSend.id; 
-
-        onConfirmEdit(producto.id, dataToSend);
+        onConfirmEdit(producto.id, dataToSend); // Llamamos a onConfirmEdit con el id y los datos
     }
 
     return (
@@ -94,7 +84,6 @@ export default function ModificarProductoPage({ producto, onConfirmEdit, onClose
                 </div>
                 <div className="col-md-6 mb-3">
                     <label htmlFor="categoria" className="form-label">Categoría</label>
-                    <input type="text" className="form-control" id="categoria" name="categoria" value={formData.categoria} onChange={handleChange} />
                     <select className="form-select" id="categoria_id" name="categoria_id" value={formData.categoria_id} onChange={handleChange} required>
                         <option value="">Seleccione una categoría</option>
                         {categorias.map(cat => (
@@ -105,14 +94,10 @@ export default function ModificarProductoPage({ producto, onConfirmEdit, onClose
             </div>
             <div className="row">
                 <div className="col-md-6 mb-3">
-                    <label htmlFor="precioCompra" className="form-label">Precio de Compra</label>
-                    <input type="number" step="0.01" className="form-control" id="precioCompra" name="precioCompra" value={formData.precioCompra} onChange={handleChange} required />
                     <label htmlFor="precio_compra" className="form-label">Precio de Compra</label>
                     <input type="number" step="0.01" className="form-control" id="precio_compra" name="precio_compra" value={formData.precio_compra} onChange={handleChange} required />
                 </div>
                 <div className="col-md-6 mb-3">
-                    <label htmlFor="precioVenta" className="form-label">Precio de Venta</label>
-                    <input type="number" step="0.01" className="form-control" id="precioVenta" name="precioVenta" value={formData.precioVenta} onChange={handleChange} required />
                     <label htmlFor="precio_venta" className="form-label">Precio de Venta</label>
                     <input type="number" step="0.01" className="form-control" id="precio_venta" name="precio_venta" value={formData.precio_venta} onChange={handleChange} required />
                 </div>

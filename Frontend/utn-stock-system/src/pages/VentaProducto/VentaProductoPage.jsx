@@ -155,7 +155,9 @@ function PaginaVenta() {
           <hr />
           <div className="text-end">
             <h3>Total: ${totalCarrito.toFixed(2)}</h3>
-            <Button clase="btn btn-primary" onClick={confirmarVenta} texto="Confirmar Venta" />
+            <Button clase="btn btn-primary" onClick={confirmarVenta} texto="Confirmar Venta">
+              Confirmar Venta
+            </Button>
           </div>
         </div>
       </div>
