@@ -1,0 +1,14 @@
+//Rutas de informes
+
+GET http://localhost:8000/informes/informe-semanal
+  Accept: application/json
+
+###
+
+GET http://localhost:8000/informes/informe-ventas
+    Accept: application/json
+###
+
+
+GET http://localhost:8000/informes/informe-ventas-usuarios
+    Accept: application/json

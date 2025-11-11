@@ -1,38 +1,33 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import InformePDF from "../pdf/informe";
+import InformePDF from "../pdf/InformePDF";
 
 function NavBar() {
-  const [informeData, setInformeData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [informeSemanal, setInformeSemanal] = useState(null);
+  const [informeVentas, setInformeVentas] = useState(null);
+  const [informeVentasUsuarios, setInformeVentasUsuarios] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
-  // Esta función se llamará cuando el usuario haga clic
-  const handleDownloadClick = async () => {
-    if (informeData) { // Si ya tenemos los datos, no hacemos nada
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
+  const handleInforme = async () => {
+    setLoading(true);
+    setDataLoaded(false);
     try {
-      const [resSemanal, resVentas, resVentasUsuarios] = await Promise.all([
+      const [semanalRes, ventasRes, ventaUsuarioRes] = await Promise.all([
         fetch("http://localhost:8000/informes/informe-semanal"),
         fetch("http://localhost:8000/informes/informe-ventas"),
         fetch("http://localhost:8000/informes/informe-ventas-usuarios"),
       ]);
 
-      const dataSemanal = resSemanal.ok ? await resSemanal.json() : [];
-      const dataVentas = resVentas.ok ? await resVentas.json() : [];
-      const dataVentasUsuarios = resVentasUsuarios.ok ? await resVentasUsuarios.json() : [];
-
-      setInformeData({ dataSemanal, dataVentas, dataVentasUsuarios });
-    } catch (err) {
-      setError("No se pudo generar el informe.");
-      console.error("Error fetching report data:", err);
+      setInformeSemanal(await semanalRes.json());
+      setInformeVentas(await ventasRes.json());
+      setInformeVentasUsuarios(await ventaUsuarioRes.json());
+      setDataLoaded(true);
+    } catch (error) {
+      console.error("Error al obtener los informes:", error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -70,21 +65,28 @@ function NavBar() {
                   Vender Productos
                 </NavLink>
               </li>
-              <li className="nav-item" onClick={handleDownloadClick}>
-                {isLoading ? (
-                  <span className="nav-link">Cargando informe...</span>
-                ) : error ? (
-                  <span className="nav-link text-danger">{error}</span>
-                ) : informeData ? (
-                  <PDFDownloadLink
-                    document={<InformePDF data={informeData} />}
-                    fileName="informe_stock_system.pdf"
-                    className="nav-link"
+              <li className="nav-item">
+                {!dataLoaded ? (
+                  <button
+                    className="btn btn-outline-info"
+                    onClick={handleInforme}
+                    disabled={loading}
                   >
-                    Descargar Informe
-                  </PDFDownloadLink>
+                    {loading ? "Generando..." : "Generar Informe PDF"}
+                  </button>
                 ) : (
-                  <a href="#" className="nav-link">Generar Informe</a>
+                  <PDFDownloadLink
+                    document={
+                      <InformePDF
+                        semanal={informeSemanal}
+                        ventas={informeVentas}
+                        ventaUsuario={informeVentasUsuarios}
+                      />
+                    }
+                    fileName="informe.pdf"
+                  >
+                    {({ loading }) => (loading ? 'Cargando documento...' : 'Descargar PDF')}
+                  </PDFDownloadLink>
                 )}
               </li>
             </ul>
