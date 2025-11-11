@@ -5,10 +5,7 @@ function PaginaVenta() {
   const [productos, setProductos] = useState([]);
   const [carrito, setCarrito] = useState([]);
 
-  // Simulación de un cliente por defecto. En una app real,
-  // deberías tener una forma de seleccionar o asignar un cliente.
-  // Por ejemplo, un cliente "Consumidor Final" con id = 1.
-  const clientePorDefectoId = 1;
+  const usuario_id = 1;
 
   const getProductos = async () => {
     try {
@@ -62,19 +59,19 @@ function PaginaVenta() {
     }
 
     try {
-      // 1. Crear la factura para obtener el ID
-      const resFactura = await fetch(`http://localhost:8000/factura/${clientePorDefectoId}`);
-      if (!resFactura.ok) throw new Error("Error al crear la factura.");
-      const facturaId = await resFactura.json();
+      // 1. Crear la movimiento para obtener el ID
+      const resMovimiento = await fetch(`http://localhost:8000/movimientos/${usuario_id}`);
+      if (!resMovimiento.ok) throw new Error("Error al crear el movimiento.");
+      const movimientoId = await resMovimiento.json();
 
-      // 2. Agregar cada item del carrito a la factura
+      // 2. Agregar cada item del carrito a la movimiento
       for (const item of carrito) {
         const itemParaAgregar = {
-          facturaId: facturaId,
+          movimientoId: movimientoId,
           productoId: item.id,
           cantidad: item.cantidad,
         };
-        const resItem = await fetch("http://localhost:8000/detalle/agregar-item", {
+        const resItem = await fetch("http://localhost:8000/detalle/agregar-producto", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(itemParaAgregar),
