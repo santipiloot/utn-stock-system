@@ -8,7 +8,6 @@ import VistaProductoPage from "../ProductoForm/VistaProductoPage";
 import ModificarProductoPage from "../ProductoForm/ModificarProductoPage";
 import EliminarProductoPage from "../ProductoForm/EliminarProductoPage";
 import AgregarProductoPage from "../ProductoForm/AgregarProductoPage";
-// import { use } from "react";
 
 export default function TablaProductosPage(){
     // Ejemplo para probar
@@ -28,11 +27,11 @@ export default function TablaProductosPage(){
     const [productos, setProductos] = useState([]);
 
     const getProductos = async () => {
-    const response = await fetch("http://localhost:8000/productos");
-    const data = await response.json();
-    console.log("Productos: ", data);
-    setProductos(data);
-  };
+        const response = await fetch("http://localhost:8000/productos");
+        const data = await response.json();
+        console.log("Productos: ", data);
+        setProductos(data);
+    };
 
     // Estados para controlar ventana modal
     const [showModal, setShowModal] = useState(false);

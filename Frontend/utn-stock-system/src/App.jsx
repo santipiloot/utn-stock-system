@@ -4,6 +4,7 @@ import NavBar from './components/ui/NavBar'
 import LoginPage from './pages/Login/LoginPage'
 import TablaProductosPage from './pages/Productos/TablaProductosPAge'
 import VentaProductoPage from './pages/VentaProducto/VentaProductoPage'
+import AdminDashboardPage from './pages/Admin/AdminDashboardPage'
 
 function App() {
 
@@ -15,7 +16,7 @@ function App() {
     <Routes>
 
       <Route path='/' element={<LoginPage/>}/>
-      <Route path='/usuarios' element={""}/>
+      <Route path='/usuarios' element={<AdminDashboardPage/>}/>
       <Route path='/productos' element={<TablaProductosPage/>}/>
       <Route path='/venta-productos' element={<VentaProductoPage/>}/>
 
