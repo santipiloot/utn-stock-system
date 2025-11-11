@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from database import db
 from models.detalles import AgregarProducto, EliminarProducto
 
-async def add_item(item: AgregarProducto):
+async def AgregarProducto(item: AgregarProducto):
     query = "CALL sp_agregar_producto_detalle(:movimientoId, :productoId, :cantidad);"
     rows = await db.fetch_all(query=query, values=item.dict())
     
@@ -12,8 +12,8 @@ async def add_item(item: AgregarProducto):
         raise HTTPException(status_code=400, detail=resultado.get("mensaje"))
     return rows
 
-async def remove_item(item: EliminarProducto):
-    query = "CALL sp_eliminar_producto_detalle(:movimientoId, :productoId);"
+async def EliminarProducto(item: EliminarProducto):
+    query = "CALL sp_quitar_producto_detalle(:movimientoId, :productoId);"
     rows = await db.fetch_all(query=query, values=item.dict())
     return rows
     
